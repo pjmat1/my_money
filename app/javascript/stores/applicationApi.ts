@@ -15,10 +15,11 @@ export const applicationApi = createApi({
     'loan-report',
     'matching-transactions',
     'net-balance-report',
+    'recurring-payments-report',
     'subcategories',
     'subcategory-report',
     'transactions',
   ],
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/api' }),
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   endpoints: () => ({}),
 })

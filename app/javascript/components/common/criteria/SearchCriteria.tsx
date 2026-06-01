@@ -12,6 +12,7 @@ import '../../../stylesheets/search-criteria.scss'
 
 type FilterOptions = {
   multiple?: boolean
+  activeOnly?: boolean
   showSubcategories?: boolean
   allowUnassigned?: boolean
 }
@@ -28,6 +29,7 @@ type SearchCriteriaProps = {
 const SearchCriteria = ({ filters }: SearchCriteriaProps) => {
   const renderFilter = ({ name, options }: Filter) => {
     const allowMultipleAccounts = options?.multiple == true
+    const activeOnly = options?.activeOnly == true
     const showSubcategories = options?.showSubcategories == true
     const allowUnassigned = options?.allowUnassigned == true
 
@@ -36,7 +38,11 @@ const SearchCriteria = ({ filters }: SearchCriteriaProps) => {
         return <DateRangeFilter key={DATE_RANGE_FILTER} />
       case ACCOUNT_FILTER:
         return (
-          <AccountFilter key={ACCOUNT_FILTER} isMulti={allowMultipleAccounts} />
+          <AccountFilter
+            key={ACCOUNT_FILTER}
+            isMulti={allowMultipleAccounts}
+            activeOnly={activeOnly}
+          />
         )
       case CATEGORY_FILTER:
         return (

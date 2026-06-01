@@ -17,6 +17,7 @@ import IncomeExpenseBarChart from './reports/IncomeExpenseBarChart'
 import IncomeVsExpensesReport from './reports/IncomeVsExpensesReport'
 import LoanReport from './loan/LoanReport'
 import NetBalanceChart from './reports/NetBalanceChart'
+import RecurringPaymentsReport from './reports/RecurringPaymentsReport'
 import store from '../stores/store'
 
 const MyMoney = () => {
@@ -54,6 +55,10 @@ const MyMoney = () => {
             <Route
               path="/reports/subcategoryReport"
               element={<SubcategoryReport />}
+            />
+            <Route
+              path="/reports/recurringPayments"
+              element={<RecurringPaymentsReport />}
             />
             <Route path="/reports/loanReport" element={<LoanReport />} />
           </Routes>

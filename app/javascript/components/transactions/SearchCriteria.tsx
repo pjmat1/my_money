@@ -68,7 +68,7 @@ const SearchCriteria = () => {
     <React.Fragment>
       <CommonSearchCriteria
         filters={[
-          { name: ACCOUNT_FILTER, options: { multiple: false } },
+          { name: ACCOUNT_FILTER, options: { multiple: false, activeOnly: true } },
           { name: DATE_RANGE_FILTER },
         ]}
       />

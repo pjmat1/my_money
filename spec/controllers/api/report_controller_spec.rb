@@ -241,4 +241,51 @@ RSpec.describe Api::ReportController do
       expect(json['message']).to eq('Account is not a loan account')
     end
   end
+
+  describe 'recurring payments report' do
+    it 'returns recurring payment candidates' do
+      report_data = [
+        {
+          merchant: 'NETFLIX.COM',
+          merchant_key: 'netflix com',
+          amount: -1599,
+          months_matched: 4,
+          occurrence_count: 4,
+          first_date: '2026-01-10',
+          last_date: '2026-04-10',
+          monthly_occurrences: { '2026-01' => 1, '2026-02' => 1, '2026-03' => 1, '2026-04' => 1 },
+          transactions: []
+        }
+      ]
+
+      search = instance_double Lib::RecurringPaymentsSearch
+      allow(Lib::RecurringPaymentsSearch).to receive(:new).and_return(search)
+      allow(search).to receive(:report).and_return(report_data)
+
+      get :recurring_payments
+
+      expect(response).to have_http_status(:ok)
+      json = response.parsed_body
+      expect(json['report']).to eq(
+        [
+          {
+            'merchant' => 'NETFLIX.COM',
+            'merchant_key' => 'netflix com',
+            'amount' => -1599,
+            'months_matched' => 4,
+            'occurrence_count' => 4,
+            'first_date' => '2026-01-10',
+            'last_date' => '2026-04-10',
+            'monthly_occurrences' => {
+              '2026-01' => 1,
+              '2026-02' => 1,
+              '2026-03' => 1,
+              '2026-04' => 1
+            },
+            'transactions' => []
+          }
+        ]
+      )
+    end
+  end
 end

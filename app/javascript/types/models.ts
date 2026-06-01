@@ -228,3 +228,15 @@ export type BarChartData = {
 export type AccountBalanceReport = {
   [accountId: string]: Point[]
 }
+
+export type RecurringPaymentCandidate = {
+  merchant: string
+  merchantKey: string
+  amount: number
+  monthsMatched: number
+  occurrenceCount: number
+  firstDate: string
+  lastDate: string
+  monthlyOccurrences: { [month: string]: number }
+  transactions: Transaction[]
+}

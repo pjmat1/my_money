@@ -7,12 +7,14 @@ import {
   LineSeriesData,
   LoanReportResponse,
   PointResponse,
+  RecurringPaymentCandidate,
   TransactionReport,
 } from 'types/models'
 import {
   TransactionReportResponse,
   IncomeExpenseReportResponse,
   AccountBalanceReportResponse,
+  RecurringPaymentsReportResponse,
 } from 'types/api'
 import {
   chartDataForCombo,
@@ -132,6 +134,28 @@ export const reportApi = applicationApi.injectEndpoints({
         response.report,
       providesTags: () => ['net-balance-report'],
     }),
+    getRecurringPaymentsReport: builder.query<RecurringPaymentCandidate[], void>({
+      query() {
+        return {
+          url: 'report/recurring_payments',
+        }
+      },
+      transformResponse: (response: RecurringPaymentsReportResponse) =>
+        response.report.map((candidate) => ({
+          merchant: candidate.merchant,
+          merchantKey: candidate.merchant_key,
+          amount: candidate.amount,
+          monthsMatched: candidate.months_matched,
+          occurrenceCount: candidate.occurrence_count,
+          firstDate: candidate.first_date,
+          lastDate: candidate.last_date,
+          monthlyOccurrences: candidate.monthly_occurrences,
+          transactions: candidate.transactions.map((transaction) =>
+            transformFromApi(transaction),
+          ),
+        })),
+      providesTags: () => ['recurring-payments-report'],
+    }),
   }),
 })
 
@@ -143,4 +167,5 @@ export const {
   useGetSubcategoryReportQuery,
   useGetAccountBalanceReportQuery,
   useGetNetBalanceReportQuery,
+  useGetRecurringPaymentsReportQuery,
 } = reportApi

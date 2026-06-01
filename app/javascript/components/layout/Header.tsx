@@ -38,6 +38,9 @@ const Header = () => (
         <LinkContainer to="/reports/subcategoryReport">
           <NavDropdown.Item>Subcategory Report</NavDropdown.Item>
         </LinkContainer>
+        <LinkContainer to="/reports/recurringPayments">
+          <NavDropdown.Item>Recurring Payments</NavDropdown.Item>
+        </LinkContainer>
         <NavDropdown.Divider />
         <LinkContainer to="/reports/accountBalance">
           <NavDropdown.Item>Account Balance Line Chart</NavDropdown.Item>
