@@ -38,8 +38,8 @@ module Lib
 
         {
           merchant: display_merchant(grouped_transactions),
-          merchant_key: merchant_key,
-          amount: amount,
+          merchant_key:,
+          amount:,
           months_matched: month_counts.keys.length,
           occurrence_count: grouped_transactions.length,
           first_date: grouped_transactions.min_by(&:date).date.to_s,

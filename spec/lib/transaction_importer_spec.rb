@@ -67,6 +67,20 @@ describe Lib::TransactionImporter do
       expect(transactions[0].duplicate).to be_falsey
       expect(transactions[0].import).to be_truthy
     end
+
+    it 'routes uppercase OFX extensions to the OFX parser' do
+      ofx_parser = instance_double Lib::OfxParser
+      transaction = ImportedTransaction.new(memo:, date:, amount:)
+
+      allow(file).to receive(:original_filename).and_return('file.OFX')
+      allow(Lib::OfxParser).to receive(:new).with(file).and_return(ofx_parser)
+      allow(ofx_parser).to receive(:transactions).and_return([transaction])
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].memo).to eq(memo)
+    end
   end
 
   describe 'csv file' do
@@ -86,6 +100,40 @@ describe Lib::TransactionImporter do
       expect(transactions[0].amount).to eq(amount)
       expect(transactions[0].duplicate).to be_falsey
       expect(transactions[0].import).to be_truthy
+    end
+  end
+
+  describe 'pdf file' do
+    it 'returns the parsed transactions' do
+      pdf_parser = instance_double Lib::PdfParser
+      transaction = ImportedTransaction.new(memo:, date:, amount:)
+
+      allow(file).to receive(:original_filename).and_return('file.pdf')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].memo).to eq(memo)
+      expect(transactions[0].date).to eq(Date.parse(date))
+      expect(transactions[0].amount).to eq(amount)
+      expect(transactions[0].duplicate).to be_falsey
+      expect(transactions[0].import).to be_truthy
+    end
+
+    it 'routes uppercase PDF extensions to the PDF parser' do
+      pdf_parser = instance_double Lib::PdfParser
+      transaction = ImportedTransaction.new(memo:, date:, amount:)
+
+      allow(file).to receive(:original_filename).and_return('file.PDF')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].memo).to eq(memo)
     end
   end
 end

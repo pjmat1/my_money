@@ -18,7 +18,14 @@ module Lib
     end
 
     def parser
-      @data_file.original_filename.end_with?('ofx') ? Lib::OfxParser.new(@data_file) : Lib::CsvParser.new(@data_file)
+      case File.extname(@data_file.original_filename).downcase
+      when '.ofx'
+        Lib::OfxParser.new(@data_file)
+      when '.pdf'
+        Lib::PdfParser.new(@data_file)
+      else
+        Lib::CsvParser.new(@data_file)
+      end
     end
 
     def build_transaction(txn)
