@@ -15,16 +15,22 @@ import { RootState } from 'stores/store'
 
 type AccountFilterProps = {
   isMulti: boolean
+  activeOnly?: boolean
 }
 
 const AccountFilter = (props: AccountFilterProps) => {
-  const { isSuccess, groupedAccounts, currentAccount } = useGroupedAccounts()
+  const { isSuccess, groupedAccounts, activeGroupedAccounts, currentAccount } =
+    useGroupedAccounts()
   const currentSelectedAccounts = useSelector(
     (state: RootState) => state.currentStore.currentSelectedAccounts,
   )
   const dispatch = useDispatch()
 
-  const groupedOptions = groupedAccounts?.map((ga) => ({
+  const visibleGroupedAccounts = props.activeOnly
+    ? activeGroupedAccounts
+    : groupedAccounts
+
+  const groupedOptions = visibleGroupedAccounts?.map((ga) => ({
     label: ga.accountType.name,
     options: ga.accounts,
   }))
@@ -41,7 +47,7 @@ const AccountFilter = (props: AccountFilterProps) => {
     }
   }
 
-  if (isSuccess && groupedAccounts && currentAccount) {
+  if (isSuccess && visibleGroupedAccounts && currentAccount) {
     return (
       <div className="account-filter">
         <label htmlFor="accountId" className="control-label">
