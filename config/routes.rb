@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     get 'report/eod_balance'
     get 'report/net_balance'
     get 'report/home_loan'
+    get 'report/recurring_payments'
     get 'report/index'
   end
 
