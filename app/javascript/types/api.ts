@@ -171,3 +171,19 @@ export type AccountBalanceReportResponse = {
   account_id: number
   report: MonthTotals[]
 }
+
+export type RecurringPaymentCandidateResponse = {
+  merchant: string
+  merchant_key: string
+  amount: number
+  months_matched: number
+  occurrence_count: number
+  first_date: string
+  last_date: string
+  monthly_occurrences: { [month: string]: number }
+  transactions: TransactionResponse[]
+}
+
+export type RecurringPaymentsReportResponse = {
+  report: RecurringPaymentCandidateResponse[]
+}

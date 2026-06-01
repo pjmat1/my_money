@@ -87,6 +87,11 @@ module Api
       end
     end
 
+    def recurring_payments
+      search = Lib::RecurringPaymentsSearch.new
+      render json: { report: search.report }
+    end
+
     private
 
     def merge_data(income_data, expense_data)

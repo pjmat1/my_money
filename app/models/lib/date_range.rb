@@ -120,4 +120,15 @@ module Lib
       @from_date = Date.new(Time.zone.today.year - 1, Time.zone.today.month, 1)
     end
   end
+
+  # Last6MonthsDateRange
+  # sets from and to dates to represent the last 6 months (including current month)
+  class Last6MonthsDateRange < DateRange
+    def initialize(_args = {})
+      super()
+      @to_date = Date.new(Time.zone.today.year, Time.zone.today.month, - 1)
+      current_month = Date.new(Time.zone.today.year, Time.zone.today.month, 1)
+      @from_date = current_month << 5
+    end
+  end
 end
