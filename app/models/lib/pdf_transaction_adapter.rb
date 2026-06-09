@@ -94,6 +94,7 @@ module Lib
         details << line
       end
 
+      append_trailing_details!(transactions, current_date, details)
       transactions
     end
 
