@@ -68,7 +68,11 @@ module Api
 
     def import
       transactions = Lib::TransactionImporter.new(account, params[:data_file]).execute
-      render json: transactions
+      render json: {
+        imported_transactions: transactions.map do |transaction|
+          ImportedTransactionSerializer.new(transaction).serializable_hash
+        end
+      }
     end
 
     def matching

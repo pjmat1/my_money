@@ -50,7 +50,7 @@ const FileChooserModal = (props: FileChooserModalProps) => {
         <p>
           Please select a file to import transactions into the &apos;
           <strong>{props.account.name}</strong>
-          &apos; Account. The file must be in OFX format
+          &apos; Account. The file must be in OFX, CSV, or PDF format
         </p>
         <p>Choose File:</p>
         <div className="file-chooser">
@@ -63,7 +63,7 @@ const FileChooserModal = (props: FileChooserModalProps) => {
             name="fileChooser"
             type="file"
             style={{ display: 'none' }}
-            accept=".ofx,.csv"
+            accept="application/pdf,.pdf,text/csv,.csv,.ofx"
             onChange={onChooseFile}
           />
           {renderFileName()}

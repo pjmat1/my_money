@@ -40,3 +40,5 @@ group :test do
   gem 'factory_bot_rails'
   gem 'rspec-rails', '~> 6.1.2'
 end
+
+gem 'pdf-reader', '~> 2.15'
