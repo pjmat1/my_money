@@ -3,6 +3,22 @@
 require 'rails_helper'
 
 RSpec.describe Api::TransactionsController do
+  describe 'POST import' do
+    it 'renders an empty imported transaction collection without error' do
+      account = instance_double(Account)
+      importer = instance_double(Lib::TransactionImporter)
+
+      allow(controller).to receive(:account).and_return(account)
+      allow(Lib::TransactionImporter).to receive(:new).with(account, 'uploaded-file').and_return(importer)
+      allow(importer).to receive(:execute).and_return([])
+
+      post :import, params: { account_id: 1, data_file: 'uploaded-file' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq({ 'imported_transactions' => [] })
+    end
+  end
+
   describe 'GET index' do
     it 'returns all transactions for specified account for specified date' do
       t1 = FactoryBot.create(:transaction, date: '2014-07-03')
@@ -223,17 +239,18 @@ RSpec.describe Api::TransactionsController do
       account = FactoryBot.create(:account)
       file = 'data_file'
       importer = instance_double(Lib::TransactionImporter)
+      transaction = ImportedTransaction.new(date: '2014-07-01', amount: 100, memo: 'transaction')
 
       allow(Lib::TransactionImporter).to receive(:new).with(account, file).and_return(importer)
-      allow(importer).to receive(:execute).and_return(transactions: ['transaction'])
+      allow(importer).to receive(:execute).and_return([transaction])
 
-      get :import, params: { account_id: account.id, data_file: file }
+      post :import, params: { account_id: account.id, data_file: file }
 
       expect(response).to have_http_status(:ok)
 
       json = response.parsed_body
-      expect(json['transactions'].length).to eq(1)
-      expect(json['transactions'][0]).to eq('transaction')
+      expect(json['imported_transactions'].length).to eq(1)
+      expect(json['imported_transactions'][0]['memo']).to eq('transaction')
     end
   end
 
