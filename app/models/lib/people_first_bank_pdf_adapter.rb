@@ -16,10 +16,8 @@ module Lib
       start_match = text.match(START_MARKER_REGEX)
       return nil unless start_match
 
-      end_match = text.match(END_MARKER_REGEX)
+      end_match = text.match(END_MARKER_REGEX, start_match.end(0))
       return nil unless end_match
-
-      return nil if end_match.begin(0) <= start_match.end(0)
 
       text[start_match.end(0)...end_match.begin(0)]
     end
