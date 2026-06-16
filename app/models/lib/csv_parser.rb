@@ -16,17 +16,22 @@ module Lib
     private
 
     def parse
-      txn_array = []
+      @file.rewind if @file.respond_to?(:rewind)
+      csv = CSV.parse(@file.read, headers: true, header_converters: :symbol)
+      return [] if csv.empty?
 
-      CSV.parse(@file.read, headers: true, header_converters: :symbol) do |row|
-        transaction = ImportedTransaction.new
-        transaction.date = parse_date row[:date]
-        transaction.memo = row[:description]
-        transaction.amount = parse_debit(row[:debit]) || parse_credit(row[:credit])
-        txn_array << transaction
-      end
+      adapter_for(csv.headers).new(csv).transactions
+    end
 
-      txn_array
+    def adapter_for(headers)
+      adapters.find { |adapter_class| adapter_class.matches_headers?(headers) } || Lib::LegacyCsvTransactionAdapter
+    end
+
+    def adapters
+      [
+        Lib::PeopleFirstBankCsvAdapter,
+        Lib::LegacyCsvTransactionAdapter
+      ]
     end
   end
 end

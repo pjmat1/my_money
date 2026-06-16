@@ -36,6 +36,8 @@ module Lib
     end
 
     def apply_patterns(transaction)
+      return if transaction.memo.blank?
+
       # Pattern.where(account_id: @account.id).find_each do |pattern|
       Pattern.find_each do |pattern|
         next unless transaction.memo.downcase.include? pattern.match_text.downcase
