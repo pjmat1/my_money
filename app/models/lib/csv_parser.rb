@@ -4,6 +4,8 @@ require 'csv'
 
 module Lib
   class CsvParser < Lib::Parser
+    PENDING_PURCHASE_MARKER = 'PURCHASE AUTHORISATION'
+
     def initialize(file)
       super()
       @file = file
@@ -20,7 +22,13 @@ module Lib
       csv = CSV.parse(@file.read, headers: true, header_converters: :symbol)
       return [] if csv.empty?
 
-      adapter_for(csv.headers).new(csv).transactions
+      filtered_rows = csv.reject { |row| pending_purchase_authorisation?(row) }
+
+      adapter_for(csv.headers).new(filtered_rows).transactions
+    end
+
+    def pending_purchase_authorisation?(row)
+      row.fields.any? { |value| value.to_s.upcase.include?(PENDING_PURCHASE_MARKER) }
     end
 
     def adapter_for(headers)

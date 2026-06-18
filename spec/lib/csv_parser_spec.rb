@@ -68,4 +68,22 @@ describe 'CsvParser' do
     expect(transactions[0].memo).to eq('Coffee Club')
     expect(transactions[1].memo).to eq('Direct Credit')
   end
+
+  it 'does not import pending purchase authorisations from CSV' do
+    csv = <<~CSV
+      Date,Amount,Account Number,,Transaction Type,Transaction Details,Balance,Category,Merchant Name,Processed On
+      12/06/2026,-10.00,123456,,Card Payment,PURCHASE AUTHORISATION,-10.00,Food,Grocer,12/06/2026
+      11/06/2026,-16.00,123456,,Card Payment,Coffee Shop,-26.00,Food,Coffee Shop,11/06/2026
+    CSV
+
+    file = StringIO.new(csv)
+
+    parser = Lib::CsvParser.new file
+    transactions = parser.transactions
+
+    expect(transactions.length).to eq(1)
+    expect(transactions[0].memo).to eq('Coffee Shop')
+    expect(transactions[0].date).to eq(Date.parse('2026-06-11'))
+    expect(transactions[0].amount).to eq(-1600)
+  end
 end
