@@ -107,5 +107,109 @@ describe Lib::TransactionImporter do
       expect(transactions[0].duplicate).to be_falsey
       expect(transactions[0].import).to be_truthy
     end
+
+    it 'sets duplicate when existing memo differs only by carriage returns' do
+      pdf_parser = instance_double Lib::PdfParser
+      parsed_memo = "Osko Direct Credit Osko Paul\r\nMatthews"
+      existing_memo = 'Osko Direct Credit Osko Paul Matthews'
+      transaction = ImportedTransaction.new(memo: parsed_memo, date:, amount:)
+
+      allow(file).to receive(:original_filename).and_return('file.pdf')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      FactoryBot.create(:transaction, account:, memo: existing_memo, date:, amount:)
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].duplicate).to be_truthy
+      expect(transactions[0].import).to be_falsey
+    end
+
+    it 'sets duplicate when existing memo has trailing reference tokens' do
+      pdf_parser = instance_double Lib::PdfParser
+      parsed_memo = 'Direct DebitAnz Credit Card'
+      existing_memo = 'Direct DebitAnz Credit Card 024332 4564680122023046'
+      transaction = ImportedTransaction.new(memo: parsed_memo, date:, amount:)
+
+      allow(file).to receive(:original_filename).and_return('file.pdf')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      FactoryBot.create(:transaction, account:, memo: existing_memo, date:, amount:)
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].duplicate).to be_truthy
+      expect(transactions[0].import).to be_falsey
+    end
+
+    it 'handles ascii-8bit memo encoding without raising errors' do
+      pdf_parser = instance_double Lib::PdfParser
+      parsed_memo = "Direct DebitAnz Credit Card\xC2".b
+      parsed_memo.force_encoding(Encoding::ASCII_8BIT)
+      transaction = ImportedTransaction.new(memo: parsed_memo, date:, amount:)
+
+      allow(file).to receive(:original_filename).and_return('file.pdf')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      expect { described_class.new(account, file).execute }.not_to raise_error
+    end
+
+    it 'sets duplicate when imported memo adds a wrapped surname' do
+      pdf_parser = instance_double Lib::PdfParser
+      parsed_memo = "Osko Direct Credit Osko Paul\nMatthews"
+      existing_memo = 'Osko Direct Credit Osko Paul'
+      transaction = ImportedTransaction.new(memo: parsed_memo, date:, amount:)
+
+      allow(file).to receive(:original_filename).and_return('file.pdf')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      FactoryBot.create(:transaction, account:, memo: existing_memo, date:, amount:)
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].duplicate).to be_truthy
+      expect(transactions[0].import).to be_falsey
+    end
+
+    it 'applies account pattern when memo spans lines' do
+      pdf_parser = instance_double Lib::PdfParser
+      wrapped_memo = "Osko Direct Credit Osko Paul\nMatthews"
+      transaction = ImportedTransaction.new(memo: wrapped_memo, date:, amount:)
+      category = FactoryBot.create(:category)
+      subcategory = FactoryBot.create(:subcategory, category:)
+
+      allow(file).to receive(:original_filename).and_return('file.pdf')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      FactoryBot.create(:pattern,
+                        account:,
+                        match_text: 'Osko Direct Credit Osko Paul Matthews',
+                        category:,
+                        subcategory:,
+                        notes: 'Matched wrapped memo')
+
+      other_account = FactoryBot.create(:account)
+      other_category = FactoryBot.create(:category)
+      FactoryBot.create(:pattern,
+                        account: other_account,
+                        match_text: 'Osko Direct Credit Osko Paul Matthews',
+                        category: other_category,
+                        notes: 'Should not be used')
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].category_id).to eq(category.id)
+      expect(transactions[0].subcategory_id).to eq(subcategory.id)
+      expect(transactions[0].notes).to eq('Matched wrapped memo')
+    end
   end
 end
