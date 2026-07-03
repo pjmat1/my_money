@@ -18,10 +18,10 @@ type Error = {
 
 export const patternApi = applicationApi.injectEndpoints({
   endpoints: (builder) => ({
-    getPatterns: builder.query<Pattern[], number>({
-      query(accountId) {
+    getPatterns: builder.query<Pattern[], void>({
+      query() {
         return {
-          url: `accounts/${accountId}/patterns`,
+          url: 'patterns',
         }
       },
       transformResponse: (results: { patterns: PatternResponse[] }) =>
@@ -30,7 +30,7 @@ export const patternApi = applicationApi.injectEndpoints({
     }),
     upsertPattern: builder.mutation<void, Pattern>({
       query: (pattern) => ({
-        url: `accounts/${pattern.accountId}/patterns${pattern.id ? '/' + pattern.id : ''}`,
+        url: `patterns${pattern.id ? '/' + pattern.id : ''}`,
         method: pattern.id ? 'PUT' : 'POST',
         body: { pattern: transformToApi(pattern) },
       }),
@@ -58,7 +58,7 @@ export const patternApi = applicationApi.injectEndpoints({
     }),
     deletePattern: builder.mutation<void, Pattern>({
       query: (pattern) => ({
-        url: `/accounts/${pattern.accountId}/patterns/${pattern.id}`,
+        url: `patterns/${pattern.id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['patterns'],

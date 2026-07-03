@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :pattern do
-    account { FactoryBot.create(:account) }
+    account { nil }
     match_text { 'New Pattern' }
     notes { 'Pattern Note' }
     category { FactoryBot.create(:category) }

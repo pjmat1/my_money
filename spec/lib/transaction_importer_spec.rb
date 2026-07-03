@@ -53,7 +53,7 @@ describe Lib::TransactionImporter do
     it 'sets category and subcategory for transactions which match a pattern' do
       category = FactoryBot.create(:category)
       subcategory = FactoryBot.create(:subcategory, category:)
-      FactoryBot.create(:pattern, account:, match_text: memo, notes: 'New Note', category:,
+      FactoryBot.create(:pattern, match_text: memo, notes: 'New Note', category:,
                                   subcategory:)
 
       transactions = described_class.new(account, file).execute
@@ -178,7 +178,7 @@ describe Lib::TransactionImporter do
       expect(transactions[0].import).to be_falsey
     end
 
-    it 'applies account pattern when memo spans lines' do
+    it 'applies global pattern when memo spans lines' do
       pdf_parser = instance_double Lib::PdfParser
       wrapped_memo = "Osko Direct Credit Osko Paul\nMatthews"
       transaction = ImportedTransaction.new(memo: wrapped_memo, date:, amount:)
@@ -190,7 +190,6 @@ describe Lib::TransactionImporter do
       allow(pdf_parser).to receive(:transactions).and_return([transaction])
 
       FactoryBot.create(:pattern,
-                        account:,
                         match_text: 'Osko Direct Credit Osko Paul Matthews',
                         category:,
                         subcategory:,
@@ -200,7 +199,7 @@ describe Lib::TransactionImporter do
       other_category = FactoryBot.create(:category)
       FactoryBot.create(:pattern,
                         account: other_account,
-                        match_text: 'Osko Direct Credit Osko Paul Matthews',
+                        match_text: 'Unrelated pattern text',
                         category: other_category,
                         notes: 'Should not be used')
 

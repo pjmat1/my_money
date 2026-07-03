@@ -17,7 +17,6 @@ class Account < ApplicationRecord
   # model relationships
   # belongs_to :account_type
   has_many :transactions, dependent: nil
-  has_many :patterns, dependent: :destroy
   has_many :reconciliations, dependent: :destroy
   has_many :bank_statements, dependent: :destroy
   has_many :budgets, dependent: :destroy

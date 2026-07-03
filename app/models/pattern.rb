@@ -11,7 +11,7 @@
 #
 class Pattern < ApplicationRecord
   # model relationships
-  belongs_to :account
+  belongs_to :account, optional: true
   belongs_to :category
   belongs_to :subcategory, optional: true
 

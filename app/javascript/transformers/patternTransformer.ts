@@ -4,7 +4,6 @@ import { Pattern } from 'types/models'
 export const transformFromApi = (pattern: PatternResponse): Pattern => {
   return {
     id: pattern.id,
-    accountId: pattern.account_id,
     matchText: pattern.match_text,
     notes: pattern.notes,
     categoryId: pattern.category_id,
@@ -14,7 +13,6 @@ export const transformFromApi = (pattern: PatternResponse): Pattern => {
 
 export const transformToApi = (pattern: Pattern): PatternRequest => {
   return {
-    account_id: pattern.accountId,
     match_text: pattern.matchText,
     notes: pattern.notes,
     category_id: pattern.categoryId,

@@ -80,7 +80,6 @@ export type SubcategoryResponse = SubcategoryRequest & {
 }
 
 export type PatternRequest = {
-  account_id: number
   match_text: string
   notes: string
   category_id: number

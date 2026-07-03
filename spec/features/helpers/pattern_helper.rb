@@ -2,13 +2,13 @@ module PatternHelper
   def pattern_spec
     visit_patterns
 
-    create_pattern_for_savings_account
+    create_first_pattern
     edit_patterns
     delete_patterns
-    create_pattern_for_loan_account
+    create_second_pattern
   end
 
-  def create_pattern_for_savings_account
+  def create_first_pattern
     pattern_params = {
       match_text: 'My Match Text',
       notes: 'New Note',
@@ -19,10 +19,7 @@ module PatternHelper
     verify_pattern(pattern_params)
   end
 
-  def create_pattern_for_loan_account
-    click_on 'Account One'
-    click_on 'Account Three'
-
+  def create_second_pattern
     pattern_params = {
       match_text: 'supermarket',
       notes: 'myPatternNote',

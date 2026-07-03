@@ -5,7 +5,7 @@ feature 'Patterns', type: :feature do
     DatabaseCleaner.clean
   end
 
-  scenario 'User creates, edits and deletes a pattern for a savings account', js: true  do
+  scenario 'User creates, edits and deletes global patterns', js: true  do
     visit_categories
     create_categories
 

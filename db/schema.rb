@@ -10,17 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_06_091307) do
+ActiveRecord::Schema[7.1].define(version: 2026_07_03_090000) do
+  create_table "account_types", force: :cascade do |t|
+    t.string "name", limit: 255
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+  end
+
   create_table "accounts", force: :cascade do |t|
-    t.string "name"
-    t.string "bank"
+    t.string "name", limit: 255
+    t.string "bank", limit: 255
     t.integer "starting_balance"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.date "starting_date"
     t.integer "reconciliation_id"
-    t.string "ticker"
-    t.string "account_type"
+    t.string "ticker", limit: 255
+    t.string "account_type", limit: 255
     t.integer "limit"
     t.integer "term"
     t.decimal "interest_rate"
@@ -31,41 +37,47 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_06_091307) do
     t.integer "account_id"
     t.date "date"
     t.integer "transaction_count"
-    t.string "file_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "file_name", limit: 255
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "budgets", force: :cascade do |t|
     t.integer "account_id"
-    t.string "description"
+    t.string "description", limit: 255
     t.integer "day_of_month"
     t.integer "amount"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "categories", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "name", limit: 255
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "category_type_id"
   end
 
   create_table "category_types", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "name", limit: 255
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+  end
+
+  create_table "data_files", force: :cascade do |t|
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "patterns", force: :cascade do |t|
     t.integer "account_id"
-    t.string "match_text"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "match_text", limit: 255
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "category_id"
     t.integer "subcategory_id"
-    t.string "notes"
+    t.string "notes", limit: 255
+    t.index ["match_text"], name: "index_patterns_on_match_text"
   end
 
   create_table "reconciliations", force: :cascade do |t|
@@ -73,31 +85,38 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_06_091307) do
     t.date "statement_date"
     t.integer "statement_balance"
     t.boolean "reconciled"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.date "last_reconciled_date"
     t.decimal "last_reconciled_balance"
   end
 
   create_table "subcategories", force: :cascade do |t|
-    t.string "name"
+    t.string "name", limit: 255
     t.integer "category_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+  end
+
+  create_table "transaction_types", force: :cascade do |t|
+    t.integer "account_type_id"
+    t.string "name", limit: 255
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.string "transaction_type"
+    t.string "transaction_type", limit: 255
     t.date "date"
     t.integer "amount"
-    t.string "fitid"
-    t.string "memo"
+    t.string "fitid", limit: 255
+    t.string "memo", limit: 255
     t.integer "account_id"
     t.integer "category_id"
     t.integer "subcategory_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "notes"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+    t.string "notes", limit: 255
     t.integer "reconciliation_id"
     t.integer "balance"
     t.integer "unit_price"

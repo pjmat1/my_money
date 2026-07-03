@@ -1,7 +1,6 @@
 const patterns1 = [
   {
     id: 1,
-    account_id: 1,
     match_text: 'payment',
     notes: 'work',
     category_id: 2,
@@ -9,7 +8,6 @@ const patterns1 = [
   },
   {
     id: 2,
-    account_id: 1,
     match_text: 'Bunnings',
     notes: 'hardware',
     category_id: 3,
