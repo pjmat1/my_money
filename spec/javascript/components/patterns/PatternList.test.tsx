@@ -66,6 +66,11 @@ test('renders a list of patterns', async () => {
     expect(screen.getByText('ExpenseThree/ExpenseThreeSub')).toBeDefined()
   })
 
+  // patterns are sorted alphabetically by match text ('Bunnings' before 'payment')
+  const rows = document.querySelectorAll('#pattern-table tbody tr')
+  expect(rows[0].textContent).toContain('Bunnings')
+  expect(rows[1].textContent).toContain('payment')
+
   // click on a pattern and edit the notes
   await act(async () => {
     fireEvent(

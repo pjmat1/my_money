@@ -25,7 +25,9 @@ export const patternApi = applicationApi.injectEndpoints({
         }
       },
       transformResponse: (results: { patterns: PatternResponse[] }) =>
-        results.patterns.map((pattern) => transformFromApi(pattern)),
+        results.patterns
+          .map((pattern) => transformFromApi(pattern))
+          .sort((a, b) => a.matchText.localeCompare(b.matchText)),
       providesTags: () => ['patterns'],
     }),
     upsertPattern: builder.mutation<void, Pattern>({
