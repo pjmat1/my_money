@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
     resources :subcategories
     resources :categories
+    resources :patterns, only: [:index, :create, :update, :destroy]
 
     resources :accounts, only: [:create, :index, :destroy, :update] do
       member do
@@ -29,7 +30,6 @@ Rails.application.routes.draw do
           post 'ofx'
         end
       end
-      resources :patterns
     end
 
     # report routes

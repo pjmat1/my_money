@@ -3,7 +3,7 @@
 module Api
   class PatternsController < ApplicationController
     def index
-      render json: account.patterns
+      render json: Pattern.all
     end
 
     def create
@@ -34,13 +34,9 @@ module Api
       @pattern ||= Pattern.find(params[:id])
     end
 
-    def account
-      @account ||= Account.find(params[:account_id])
-    end
-
     # Never trust parameters from the scary internet, only allow the white list through.
     def pattern_params
-      params.require(:pattern).permit(:account_id, :match_text, :notes, :category_id, :subcategory_id)
+      params.require(:pattern).permit(:match_text, :notes, :category_id, :subcategory_id)
     end
   end
 end

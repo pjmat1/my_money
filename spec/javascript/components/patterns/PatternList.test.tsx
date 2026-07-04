@@ -27,12 +27,12 @@ const handlers = [
   http.get('/api/subcategories', async () =>
     HttpResponse.json(subcategoriesMock),
   ),
-  http.get('/api/accounts/1/patterns', async () =>
+  http.get('/api/patterns', async () =>
     HttpResponse.json(patternsAccount1),
   ),
-  http.put('/api/accounts/1/patterns/2', async () => HttpResponse.text()),
-  http.delete('/api/accounts/1/patterns/1', async () => HttpResponse.text()),
-  http.post('/api/accounts/1/patterns', async () => HttpResponse.text()),
+  http.put('/api/patterns/2', async () => HttpResponse.text()),
+  http.delete('/api/patterns/1', async () => HttpResponse.text()),
+  http.post('/api/patterns', async () => HttpResponse.text()),
 ]
 const server = setupServer(...handlers)
 
@@ -55,10 +55,6 @@ test('renders a list of patterns', async () => {
   expect(screen.getByText('New')).toBeDefined()
 
   await waitFor(() => {
-    const listHeadings = screen.getAllByRole('heading', { level: 5 })
-    expect(listHeadings?.at(0)?.textContent).toEqual('patterns for')
-    expect(listHeadings?.at(1)?.textContent).toEqual('AccountOne')
-
     // pattern 1
     expect(screen.getByText('payment')).toBeDefined()
     expect(screen.getByText('work')).toBeDefined()

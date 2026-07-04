@@ -86,7 +86,6 @@ export type DateRange = {
 
 export type Pattern = {
   id?: number
-  accountId: number
   matchText: string
   notes: string
   categoryId: number
