@@ -18,8 +18,8 @@ RSpec.describe Pattern do
   end
 
   describe 'validations' do
-    it 'is invalid without an account' do
-      expect(FactoryBot.build(:pattern, account: nil)).not_to be_valid
+    it 'is valid without an account' do
+      expect(FactoryBot.build(:pattern, account: nil)).to be_valid
     end
 
     it 'is invalid without a category' do
@@ -40,7 +40,7 @@ RSpec.describe Pattern do
   end
 
   describe 'relationships' do
-    it 'belongs to account' do
+    it 'can belong to account' do
       a = FactoryBot.create(:account)
       expect(FactoryBot.create(:pattern, account: a).account).to eq(a)
     end

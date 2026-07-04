@@ -1,11 +1,10 @@
 import React from 'react'
 
 import { PatternRow } from './PatternRow'
-import { Account, Pattern } from 'types/models'
+import { Pattern } from 'types/models'
 import { GroupedCategories } from 'hooks/useGroupedCategories'
 
 type PatternTableProps = {
-  account: Account
   groupedCategories: GroupedCategories[]
   patterns: Pattern[]
 }
@@ -37,16 +36,12 @@ export const PatternTable = (props: PatternTableProps) => {
       )
     }
     return (
-      <div className="empty-state">There are no patterns for this account</div>
+      <div className="empty-state">There are no patterns</div>
     )
   }
 
   return (
     <div>
-      <div className="pattern-title">
-        <h5 className="text-uppercase">patterns for</h5>
-        <h5 className="account-name">{props.account.name}</h5>
-      </div>
       {renderTable()}
     </div>
   )

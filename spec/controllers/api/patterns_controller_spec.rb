@@ -4,33 +4,34 @@ require 'rails_helper'
 
 RSpec.describe Api::PatternsController do
   describe 'GET index' do
-    it 'returns all patterns for given account' do
-      pattern = FactoryBot.create(:pattern)
+    it 'returns all patterns' do
+      pattern1 = FactoryBot.create(:pattern)
+      pattern2 = FactoryBot.create(:pattern)
 
-      get :index, params: { account_id: pattern.account.id }
+      get :index
 
       json = response.parsed_body
       expect(response).to have_http_status(:ok)
-      expect(json['patterns'].length).to eq(1)
-      expect(json['patterns'][0]).to eq(serialized_pattern(pattern))
+      expect(json['patterns'].length).to eq(2)
+      expect(json['patterns']).to include(serialized_pattern(pattern1))
+      expect(json['patterns']).to include(serialized_pattern(pattern2))
     end
   end
 
   describe 'POST create' do
     describe 'with valid params' do
       it 'creates a new Pattern' do
-        account = FactoryBot.create(:account)
         category = FactoryBot.create(:category)
         subcategory = FactoryBot.create(:subcategory)
         pattern_attrs = FactoryBot.attributes_for(
           :pattern,
-          account_id: account.id,
+          account: nil,
           category_id: category.id,
           subcategory_id: subcategory.id
         )
 
         expect do
-          post :create, params: { account_id: account.id, pattern: pattern_attrs }
+          post :create, params: { pattern: pattern_attrs }
         end.to change(Pattern, :count).by(1)
 
         expect(response).to have_http_status(:created)
@@ -43,13 +44,11 @@ RSpec.describe Api::PatternsController do
 
     describe 'with invalid params' do
       it 'returns an error and does not create the pattern' do
-        account = FactoryBot.create(:account)
         category = FactoryBot.create(:category)
-        pattern = FactoryBot.attributes_for(:pattern, account_id: account.id, category_id: category.id, match_text: nil)
+        pattern = FactoryBot.attributes_for(:pattern, account: nil, category_id: category.id, match_text: nil)
 
         expect do
           post :create, params: {
-            account_id: account.id,
             pattern:
           }
         end.not_to change(Pattern, :count)
@@ -68,7 +67,7 @@ RSpec.describe Api::PatternsController do
         new_subcategory = FactoryBot.create(:subcategory)
         new_category = new_subcategory.category
 
-        put :update, params: { id: pattern.id, account_id: pattern.account.id, pattern: {
+        put :update, params: { id: pattern.id, pattern: {
           match_text: 'New Text',
           notes: 'New Note',
           category_id: new_category.id,
@@ -93,7 +92,6 @@ RSpec.describe Api::PatternsController do
 
         put :update, params: {
           id: pattern.id,
-          account_id: pattern.account.id,
           pattern: FactoryBot.attributes_for(:pattern_invalid)
         }
 
@@ -109,7 +107,7 @@ RSpec.describe Api::PatternsController do
       pattern = FactoryBot.create(:pattern)
 
       expect do
-        delete :destroy, params: { id: pattern.id, account_id: pattern.account.id }
+        delete :destroy, params: { id: pattern.id }
       end.to change(Pattern, :count).by(-1)
 
       expect(response).to have_http_status(:no_content)
@@ -119,7 +117,6 @@ RSpec.describe Api::PatternsController do
   def serialized_pattern(pattern)
     {
       'id' => pattern.id,
-      'account_id' => pattern.account_id,
       'category_id' => pattern.category_id,
       'subcategory_id' => pattern.subcategory_id,
       'match_text' => pattern.match_text,
