@@ -178,7 +178,42 @@ describe Lib::TransactionImporter do
       expect(transactions[0].import).to be_falsey
     end
 
-    it 'applies account pattern when memo spans lines' do
+    it 'applies first matching global pattern when memo spans lines' do
+      pdf_parser = instance_double Lib::PdfParser
+      wrapped_memo = "Unique Global Pattern Memo\nMatthews"
+      transaction = ImportedTransaction.new(memo: wrapped_memo, date:, amount:)
+      category = FactoryBot.create(:category)
+      subcategory = FactoryBot.create(:subcategory, category:)
+
+      allow(file).to receive(:original_filename).and_return('file.pdf')
+      allow(Lib::PdfParser).to receive(:new).with(file).and_return(pdf_parser)
+      allow(pdf_parser).to receive(:transactions).and_return([transaction])
+
+      other_account = FactoryBot.create(:account)
+      other_category = FactoryBot.create(:category)
+      FactoryBot.create(:pattern,
+                        account: other_account,
+                        match_text: 'Unique Global Pattern Memo Matthews',
+                        category: other_category,
+                        subcategory: nil,
+                        notes: 'Matched wrapped memo')
+
+      FactoryBot.create(:pattern,
+                        account:,
+                        match_text: 'Unique Global Pattern Memo Matthews',
+                        category:,
+                        subcategory:,
+                        notes: 'Should not be used because it was created second')
+
+      transactions = described_class.new(account, file).execute
+
+      expect(transactions.length).to eq(1)
+      expect(transactions[0].category_id).to eq(other_category.id)
+      expect(transactions[0].subcategory_id).to be_nil
+      expect(transactions[0].notes).to eq('Matched wrapped memo')
+    end
+
+    it 'applies a global pattern with no account_id' do
       pdf_parser = instance_double Lib::PdfParser
       wrapped_memo = "Osko Direct Credit Osko Paul\nMatthews"
       transaction = ImportedTransaction.new(memo: wrapped_memo, date:, amount:)
@@ -190,26 +225,18 @@ describe Lib::TransactionImporter do
       allow(pdf_parser).to receive(:transactions).and_return([transaction])
 
       FactoryBot.create(:pattern,
-                        account:,
+                        account: nil,
                         match_text: 'Osko Direct Credit Osko Paul Matthews',
                         category:,
                         subcategory:,
-                        notes: 'Matched wrapped memo')
-
-      other_account = FactoryBot.create(:account)
-      other_category = FactoryBot.create(:category)
-      FactoryBot.create(:pattern,
-                        account: other_account,
-                        match_text: 'Osko Direct Credit Osko Paul Matthews',
-                        category: other_category,
-                        notes: 'Should not be used')
+                        notes: 'Matched global pattern')
 
       transactions = described_class.new(account, file).execute
 
       expect(transactions.length).to eq(1)
       expect(transactions[0].category_id).to eq(category.id)
       expect(transactions[0].subcategory_id).to eq(subcategory.id)
-      expect(transactions[0].notes).to eq('Matched wrapped memo')
+      expect(transactions[0].notes).to eq('Matched global pattern')
     end
   end
 end

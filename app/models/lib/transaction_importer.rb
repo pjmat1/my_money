@@ -44,7 +44,7 @@ module Lib
 
       normalized_memo = normalize_memo(transaction.memo)
 
-      Pattern.where(account_id: @account.id).find_each do |pattern|
+      Pattern.order(:id).find_each do |pattern|
         normalized_match_text = normalize_memo(pattern.match_text)
         next if normalized_match_text.blank?
         next unless normalized_memo.include?(normalized_match_text)
