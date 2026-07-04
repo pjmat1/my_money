@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
     resources :subcategories
     resources :categories
-    resources :patterns
+    resources :patterns, only: [:index, :create, :update, :destroy]
 
     resources :accounts, only: [:create, :index, :destroy, :update] do
       member do
