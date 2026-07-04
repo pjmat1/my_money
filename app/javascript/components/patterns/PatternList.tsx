@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Button } from 'react-bootstrap'
 
@@ -17,6 +17,15 @@ export const PatternList = () => {
   const { data: patterns, isLoading } = useGetPatternsQuery()
   const { groupedCategories, isSuccess: isSuccessGC } = useGroupedCategories()
   const dispatch = useDispatch()
+  const [searchText, setSearchText] = useState('')
+
+  const filteredPatterns = patterns?.filter((pattern) => {
+    const search = searchText.toLowerCase()
+    return (
+      pattern.matchText.toLowerCase().includes(search) ||
+      pattern.notes?.toLowerCase().includes(search)
+    )
+  })
 
   const newPattern = () => {
     dispatch(
@@ -36,9 +45,17 @@ export const PatternList = () => {
         </Button>
       </PageHeader>
       <div className="pattern-list">
-        {patterns && groupedCategories && isSuccessGC && (
+        <input
+          className="form-control pattern-search"
+          type="text"
+          placeholder="Search patterns..."
+          aria-label="Search patterns"
+          value={searchText}
+          onChange={(event) => setSearchText(event.currentTarget.value)}
+        />
+        {filteredPatterns && groupedCategories && isSuccessGC && (
           <PatternTable
-            patterns={patterns}
+            patterns={filteredPatterns}
             groupedCategories={groupedCategories}
           />
         )}

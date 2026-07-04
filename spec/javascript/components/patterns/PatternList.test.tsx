@@ -166,3 +166,32 @@ test('renders a list of patterns', async () => {
   const patternCreatedMessage = await screen.getByText('Pattern saved')
   expect(patternCreatedMessage).toBeDefined()
 })
+
+test('filters patterns by search text', async () => {
+  render(
+    <Provider store={store}>
+      <PatternList />
+    </Provider>,
+  )
+
+  await waitFor(() => {
+    expect(screen.getByText('payment')).toBeDefined()
+    expect(screen.getByText('Bunnings')).toBeDefined()
+  })
+
+  const searchInput = screen.getByLabelText('Search patterns')
+
+  await act(async () => {
+    fireEvent.change(searchInput, { target: { value: 'Bunnings' } })
+  })
+
+  expect(screen.getByText('Bunnings')).toBeDefined()
+  expect(screen.queryByText('payment')).toBeNull()
+
+  await act(async () => {
+    fireEvent.change(searchInput, { target: { value: '' } })
+  })
+
+  expect(screen.getByText('Bunnings')).toBeDefined()
+  expect(screen.getByText('payment')).toBeDefined()
+})
