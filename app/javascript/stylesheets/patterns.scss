@@ -1,6 +1,11 @@
 @import './colours';
 
 .pattern-list {
+  .pattern-search {
+    margin: 10px;
+    max-width: 300px;
+  }
+
   .pattern-title {
     color: $menu-color;
     display: flex;
