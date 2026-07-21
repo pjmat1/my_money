@@ -146,7 +146,7 @@ test('renders a list of patterns', async () => {
   const validationMessage = await screen.getByText('Category is required')
   expect(validationMessage).toBeDefined()
 
-  const categorySelect = await screen.getAllByRole('combobox')[1]
+  const categorySelect = await screen.getAllByRole('combobox')[0]
   await act(async () => {
     fireEvent.focus(categorySelect)
     fireEvent.keyDown(categorySelect, {
