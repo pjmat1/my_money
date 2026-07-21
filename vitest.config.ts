@@ -5,6 +5,12 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost:3000',
+      },
+    },
+    setupFiles: ['./spec/javascript/vitestSetup.ts'],
   },
   resolve: {
     alias: {
