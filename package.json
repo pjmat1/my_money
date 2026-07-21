@@ -2,7 +2,7 @@
   "name": "my_money",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "yarn test:components && yarn test:utils",
     "test:components": "vitest run spec/javascript/components/*/*.test.tsx && jest spec/javascript/components/common/date-picker",
     "test:utils": "jest spec/javascript/actions && jest spec/javascript/stores && jest spec/javascript/transformers && jest spec/javascript/util"
   },
