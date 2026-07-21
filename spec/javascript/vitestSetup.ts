@@ -1,3 +1,7 @@
+// Register jest-dom's matchers (toBeInTheDocument, toHaveAttribute, ...) with
+// vitest's expect so component tests can use them.
+import '@testing-library/jest-dom/vitest'
+
 // Under jsdom, Node's global Request/fetch (undici) require an absolute URL.
 // The app configures RTK Query's fetchBaseQuery with a root-relative baseUrl
 // ('/api'), which is valid in the browser but makes Request construction throw
