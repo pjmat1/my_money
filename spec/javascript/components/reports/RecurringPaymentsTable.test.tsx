@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import RecurringPaymentsTable from 'components/reports/RecurringPaymentsTable'
 import { RecurringPaymentCandidate } from 'types/models'
@@ -97,6 +97,35 @@ describe('RecurringPaymentsTable', () => {
 
     expect(merchantCells[0]).toBe('APPLE.COM')
     expect(merchantCells[1]).toBe('NETFLIX.COM')
+  })
+
+  describe('monthly totals', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true })
+      vi.setSystemTime(new Date('2026-02-15'))
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    test('renders the previous and current month totals above the headings', () => {
+      const { container } = render(<RecurringPaymentsTable candidates={candidates} />)
+
+      const totalCells = Array.from(
+        container.querySelectorAll('#recurring-payments thead tr.total td'),
+      )
+
+      expect(totalCells.length).toBe(2)
+
+      // Only Netflix was charged in January
+      expect(totalCells[0].textContent).toContain('Jan 2026')
+      expect(totalCells[0].textContent).toContain('15.99')
+
+      // Netflix and Apple were both charged in February
+      expect(totalCells[1].textContent).toContain('Feb 2026')
+      expect(totalCells[1].textContent).toContain('20.98')
+    })
   })
 
   test('renders an empty state when there are no candidates', () => {

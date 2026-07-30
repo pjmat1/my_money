@@ -3,6 +3,13 @@ import moment from 'moment'
 
 import Amount from 'components/common/Amount'
 import { RecurringPaymentCandidate } from 'types/models'
+import { centsToDollars, numberFormat } from 'util/moneyUtil'
+import {
+  monthKey,
+  monthLabel,
+  previousMonthKey,
+  totalForMonth,
+} from 'util/recurringPaymentsUtil'
 
 type RecurringPaymentsTableProps = {
   candidates: RecurringPaymentCandidate[]
@@ -49,9 +56,23 @@ const RecurringPaymentsTable = ({
     return merchantA.localeCompare(merchantB)
   })
 
+  const today = new Date()
+  const currentMonth = monthKey(today)
+  const previousMonth = previousMonthKey(today)
+
   return (
     <table className="table table-hover table-report" id="recurring-payments">
       <thead>
+        <tr className="total">
+          <td>
+            {monthLabel(previousMonth)}: $
+            {numberFormat(centsToDollars(totalForMonth(candidates, previousMonth)))}
+          </td>
+          <td>
+            {monthLabel(currentMonth)}: $
+            {numberFormat(centsToDollars(totalForMonth(candidates, currentMonth)))}
+          </td>
+        </tr>
         <tr>
           <th>Merchant</th>
           <th className="currency">Amount</th>
