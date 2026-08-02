@@ -10,7 +10,7 @@ RSpec.describe Api::DateRangeOptionsController do
       expect(response).to have_http_status(:ok)
       json = response.parsed_body
 
-      expect(json['date_range_options'].length).to eq(7)
+      expect(json['date_range_options'].length).to eq(8)
       expect(json['date_range_options'][0]).to include(
         'id' => 1,
         'name' => 'Current Month',
@@ -53,6 +53,12 @@ RSpec.describe Api::DateRangeOptionsController do
       expect(json['date_range_options'][6]).to include(
         'id' => 7,
         'name' => 'Last 12 Months',
+        'default' => false,
+        'custom' => false
+      )
+      expect(json['date_range_options'][7]).to include(
+        'id' => 8,
+        'name' => 'Last 365 Days',
         'default' => false,
         'custom' => false
       )

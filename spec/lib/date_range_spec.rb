@@ -126,6 +126,18 @@ RSpec.describe Lib::DateRange, type: :class do
     end
   end
 
+  describe 'Last365DaysDateRange' do
+    it 'sets from date to 365 days ago' do
+      dr = Lib::Last365DaysDateRange.new
+      expect(dr.from_date).to eq(Time.zone.today - 365)
+    end
+
+    it 'sets to date to today' do
+      dr = Lib::Last365DaysDateRange.new
+      expect(dr.to_date).to eq(Time.zone.today)
+    end
+  end
+
   describe 'Last12MonthsDateRange' do
     it 'sets from date to 12 months ago' do
       dr = Lib::Last12MonthsDateRange.new
