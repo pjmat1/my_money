@@ -101,6 +101,16 @@ module Lib
     end
   end
 
+  # Last365DaysDateRange
+  # sets from and to dates to represent the 365 days ending today
+  class Last365DaysDateRange < DateRange
+    def initialize(_args = {})
+      super()
+      @from_date = Time.zone.today - 365
+      @to_date = Time.zone.today
+    end
+  end
+
   # Last12MonthsDateRange
   # sets from and to dates to represent the last 12 months (including current month)
   class Last12MonthsDateRange < DateRange

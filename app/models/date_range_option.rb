@@ -128,4 +128,18 @@ class DateRangeOption < ClassyEnum::Base
       'Last 12 Months'
     end
   end
+
+  class Last365Days < DateRangeOption
+    def id
+      8
+    end
+
+    def order
+      8
+    end
+
+    def name
+      'Last 365 Days'
+    end
+  end
 end
