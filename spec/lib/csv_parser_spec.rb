@@ -69,6 +69,39 @@ describe 'CsvParser' do
     expect(transactions[1].memo).to eq('Direct Credit')
   end
 
+  it 'returns the transactions from a signed amount CSV file with a byte order mark' do
+    file = Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/test_signed_amount_bom.csv'))
+
+    parser = Lib::CsvParser.new file
+    transactions = parser.transactions
+
+    expect(transactions.length).to eq(2)
+
+    expect(transactions[0].memo).to eq('IB TFR 102893244 TO 102893246')
+    expect(transactions[0].date).to eq(Date.parse('2026-08-05'))
+    expect(transactions[0].amount).to eq(1_354_330)
+
+    expect(transactions[1].memo).to eq('IB TFR 102893246 to 102894393')
+    expect(transactions[1].date).to eq(Date.parse('2026-07-13'))
+    expect(transactions[1].amount).to eq(-365_200)
+  end
+
+  it 'skips signed amount rows with a blank amount' do
+    csv = <<~CSV
+      Date,Description,Amount,State,Status
+      05/08/2026,IB TFR 102893244 TO 102893246,,COMPLETED,BILLED
+      13/07/2026,IB TFR 102893246 to 102894393,-3652.00,COMPLETED,BILLED
+    CSV
+
+    file = StringIO.new(csv)
+
+    parser = Lib::CsvParser.new file
+    transactions = parser.transactions
+
+    expect(transactions.length).to eq(1)
+    expect(transactions[0].amount).to eq(-365_200)
+  end
+
   it 'does not import pending purchase authorisations from CSV' do
     csv = <<~CSV
       Date,Amount,Account Number,,Transaction Type,Transaction Details,Balance,Category,Merchant Name,Processed On
